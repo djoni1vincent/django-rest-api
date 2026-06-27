@@ -78,7 +78,7 @@ uv run python manage.py runserver          # start dev server
 uv run python manage.py makemigrations     # create migrations
 uv run python manage.py migrate            # apply migrations
 uv run python manage.py test               # run all tests
-uv run python manage.py test posts         # run tests for one app
+uv run python manage.py test products         # run tests for one app
 uv run python manage.py createsuperuser    # create admin user
 ```
 
@@ -87,7 +87,7 @@ uv run python manage.py createsuperuser    # create admin user
 Django project with settings in `config/` (not a same-named app directory):
 
 - `config/` — project settings, root URLs, wsgi/asgi
-- `posts/` — posts app (models, views, tests)
+- `products/` — products app (models, views, tests)
 - `users/` — users app (models, views, tests)
 
 **Settings module:** `config.settings`
