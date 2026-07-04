@@ -1,11 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-from drf_spectacular.utils import extend_schema
 from rest_framework import filters, viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
 
 from .models import Category, Product, Review
 from .permissions import IsOwnerOrReadOnly
-from .serializers import CategorySerializer, ProductSerializer, ReviewSerializer
+from .serializers import CategorySerializer, ProductSerializer, ProductV2Serializer, ReviewSerializer
 
 
 class ProductFilter(FilterSet):
@@ -14,12 +13,11 @@ class ProductFilter(FilterSet):
         fields = {
             "name": ["exact", "contains"],
             "category": ["exact"],
-            "price": ["exact", "lte", "gte"],
+            # "price": ["exact", "lte", "gte"],
         }
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    serializer_class = ProductSerializer
     queryset = Product.objects.prefetch_related("category").all()
     filter_backends = [
         DjangoFilterBackend,
@@ -29,7 +27,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_class = ProductFilter
 
     search_fields = ["name", "category__name"]
-    ordering_fields = ["name", "price"]
+    ordering_fields = ["name", "price_amount"]
+
+    def get_serializer_class(self):
+        if self.request.version == "v2":
+            return ProductV2Serializer
+        return ProductSerializer
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:

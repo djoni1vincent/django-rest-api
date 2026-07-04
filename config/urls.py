@@ -23,21 +23,33 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
 
+from users.views import CustomTokenObtainPairView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("", RedirectView.as_view(url="/api/schema/swagger-ui/")),
-    path("", include("products.urls")),
-    # path("users/", include("users.urls")),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path(
+        "api/schema/v1/", SpectacularAPIView.as_view(api_version="v1"), name="schema-v1"
+    ),
+    path(
+        "api/schema/v2/", SpectacularAPIView.as_view(api_version="v2"), name="schema-v2"
+    ),
+    path("", RedirectView.as_view(url="/api/schema/v1/swagger-ui/")),
+    path("api/<str:version>/", include("products.urls")),
+    # auth
+    path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
-        "api/schema/swagger-ui/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
+        "api/schema/v1/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema-v1"),
+        name="swagger-v1-ui",
     ),
+    path(
+        "api/schema/v2/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema-v2"),
+        name="swagger-v2-ui",
+    ),
+    path("silk/", include("silk.urls", namespace="silk")),
 ]

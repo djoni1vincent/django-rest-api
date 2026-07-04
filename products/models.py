@@ -21,8 +21,8 @@ class Product(models.Model):
     category = models.ManyToManyField(Category)
     name = models.CharField(max_length=100)
     description = models.TextField()
-    # image = models.ImageField(upload_to="product_images")
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price_currency = models.CharField(max_length=3, default="UAH")
+    price_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         ordering = ["name"]
@@ -61,5 +61,4 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

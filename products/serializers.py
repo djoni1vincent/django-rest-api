@@ -16,10 +16,41 @@ class ProductSerializer(serializers.ModelSerializer):
     category_ids = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), many=True, write_only=True, source="category"
     )
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, source="price_amount"
+    )
 
     class Meta:
         model = Product
-        fields = ["id", "name", "category", "category_ids", "price", "description"]
+        fields = [
+            "id",
+            "name",
+            "category",
+            "price",
+            "category_ids",
+            "description",
+        ]
+
+
+class ProductV2Serializer(ProductSerializer):
+    price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+            "category",
+            "price",
+            "category_ids",
+            "description",
+        ]
+
+    def get_price(self, obj):
+        return {
+            "amount": obj.price_amount,
+            "currency": obj.price_currency,
+        }
 
 
 class ReviewSerializer(serializers.ModelSerializer):
