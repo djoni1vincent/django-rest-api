@@ -1,53 +1,82 @@
-# Django REST API — Product Catalog
+# E-commerce Product API
 
-A REST API for a product catalog with categories, reviews, and orders. Built with Django REST Framework, JWT authentication, and auto-generated OpenAPI docs via Swagger UI.
+A RESTful API for an e-commerce platform built with Django REST Framework, featuring JWT authentication, API versioning, request throttling, and query performance profiling.
+
+## Features
+
+- **JWT Authentication** — token-based auth via `djangorestframework-simplejwt`, with custom claims (username, email, role) embedded in the access token
+- **Products, Categories & Reviews** — full CRUD via DRF ViewSets and routers
+- **Custom Permissions** — read-only access for anonymous users, write access restricted to admins/owners (`IsAdminUser`, `IsOwnerOrReadOnly`)
+- **Filtering, Search & Ordering** — `django-filter` for field-level filters (name, category, price), full-text search, and ordering
+- **Pagination** — page-number based pagination
+- **Rate Limiting** — global throttling for anonymous/authenticated users, plus a stricter scoped throttle on the login endpoint to mitigate brute-force attempts
+- **API Versioning** — URL path versioning (`/api/v1/`, `/api/v2/`); v2 introduces a richer price representation (`{amount, currency}`) while v1 stays backward-compatible
+- **OpenAPI Documentation** — interactive Swagger UI per API version, generated with `drf-spectacular`
+- **Query Profiling** — `django-silk` integration for inspecting SQL queries and catching N+1 issues
 
 ## Tech Stack
 
-- Python 3.14 / Django 6
-- Django REST Framework
-- JWT auth — `djangorestframework-simplejwt`
-- OpenAPI schema + Swagger UI — `drf-spectacular`
-- Filtering / search / ordering — `django-filter`
-- PostgreSQL
+- [Django](https://www.djangoproject.com/) 6
+- [Django REST Framework](https://www.django-rest-framework.org/)
+- [djangorestframework-simplejwt](https://django-rest-framework-simplejwt.readthedocs.io/) — JWT authentication
+- [django-filter](https://django-filter.readthedocs.io/) — filtering
+- [drf-spectacular](https://drf-spectacular.readthedocs.io/) — OpenAPI schema & Swagger UI
+- [django-silk](https://github.com/jazzband/django-silk) — request/query profiling
+- [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/)
+- [uv](https://docs.astral.sh/uv/) — dependency management and task running
 
-## Setup
+## Getting Started
+
+### Prerequisites
+
+- Python 3.14+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+
+### Installation
 
 ```bash
-git clone https://github.com/djoni1vincent/django-rest-api.git
+git clone <repo-url>
 cd django-rest-api
 uv sync
-cp .env.example .env  # fill in PostgreSQL credentials
 uv run python manage.py migrate
+uv run python manage.py createsuperuser
 uv run python manage.py runserver
 ```
 
-Open `http://localhost:8000/` — redirects to Swagger UI.
+The API will be available at `http://127.0.0.1:8000/`.
 
-## API Endpoints
+## API Overview
 
-| Method | Endpoint | Access |
-|---|---|---|
-| `GET` | `/api/products/` | Public |
-| `POST` | `/api/products/` | Admin only |
-| `GET` | `/api/products/{id}/` | Public |
-| `PUT/PATCH/DELETE` | `/api/products/{id}/` | Admin only |
-| `GET/POST` | `/api/categories/` | Public / Admin |
-| `GET/POST` | `/api/reviews/` | Auth required |
-| `PUT/DELETE` | `/api/reviews/{id}/` | Owner only |
-| `POST` | `/api/token/` | — (get JWT) |
-| `POST` | `/api/token/refresh/` | — |
+| Endpoint | Description |
+|---|---|
+| `POST /api/token/` | Obtain a JWT access/refresh token pair (rate-limited: 5/min) |
+| `POST /api/token/refresh/` | Refresh an access token |
+| `GET/POST /api/v1/products/` | List/create products (v1: flat `price`) |
+| `GET/POST /api/v2/products/` | List/create products (v2: `price` as `{amount, currency}`) |
+| `GET/POST /api/v1/categories/` | List/create categories |
+| `GET/POST /api/v1/reviews/` | List/create product reviews |
+| `/api/schema/v1/swagger-ui/` | Swagger UI — v1 |
+| `/api/schema/v2/swagger-ui/` | Swagger UI — v2 |
+| `/admin/` | Django admin |
+| `/silk/` | Query profiling dashboard |
 
-## Key Implementation Details
+## Running Tests
 
-- **Nested serializers** — `ProductSerializer` returns full `CategorySerializer` on read, accepts `category_ids` (list of PKs) on write
-- **Custom permission** — `IsOwnerOrReadOnly`: allows safe methods for all, write only for the object's `author`
-- **Custom user model** — `CustomUser` extends `AbstractUser`, uses email as `USERNAME_FIELD`, adds `role` field
-- **Filtering** — products support filter by name, category, price range; search by name/category name; ordering by name/price
+```bash
+uv run python manage.py test
+```
 
-## What I'd improve next
+## Project Structure
 
-- Add pagination to all list endpoints
-- Wire up the `users/` endpoints (currently commented out)
-- Add test coverage for permission edge cases
-- Deploy with Docker Compose + PostgreSQL
+```
+config/     # project settings, root URLs
+products/   # products, categories, reviews — models, serializers, views, filters
+users/      # custom user model, JWT serializer/view
+```
+
+## Planned Improvements
+
+- Increase automated test coverage
+- Dockerize the application (Django + PostgreSQL)
+- Deploy to a cloud provider with CI/CD
+- Migrate from SQLite to PostgreSQL
