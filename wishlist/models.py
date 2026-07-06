@@ -7,8 +7,8 @@ from users.models import CustomUser
 
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    products = models.OneToOneField(Product, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

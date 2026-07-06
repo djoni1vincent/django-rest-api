@@ -38,7 +38,7 @@ urlpatterns = [
     ),
     path("", RedirectView.as_view(url="/api/schema/v1/swagger-ui/")),
     path("api/<str:version>/", include("products.urls")),
-    # auth
+    path("api/<str:version>/", include("wishlist.urls")),
     path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
