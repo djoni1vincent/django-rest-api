@@ -6,21 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **learning project** following the Django Roadmap 2026 (Junior → Middle Backend Developer).
 
-**Current phase: Фаза 2 — Django REST Framework + API**
+**Фаза 2 — DRF + API: ✅ COMPLETE (2026-07-06)**
+**Currently: pre-Фаза 3 reinforcement — see checklist below before starting Docker/Deploy**
 **Project: E-commerce Product API** — Products, Categories, Reviews, Orders, OrderItems
 
 Roadmap: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/Django Roadmap 2026.md`
 Progress: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/progress.md`
 
-### Фаза 2 checklist (what to implement)
-- [ ] Serializers — `ModelSerializer`, nested serializers, custom validation
-- [ ] JWT Authentication — `djangorestframework-simplejwt`, access/refresh tokens
-- [ ] Generic Views + ViewSets + Router
-- [ ] Permissions — `IsAuthenticated`, custom `IsOwnerOrReadOnly`
-- [ ] Filtering + Search + Ordering — `django-filter`, `SearchFilter`, pagination
-- [ ] API Testing — `APITestCase`, >70% coverage
-- [ ] Swagger / OpenAPI — `drf-spectacular`
-- [ ] Throttling, API Versioning (`/api/v1/`)
+### Фаза 2 — all topics done
+- [x] Serializers — `ModelSerializer`, nested serializers, custom validation
+- [x] JWT Authentication — `djangorestframework-simplejwt`, access/refresh tokens
+- [x] Generic Views + ViewSets + Router
+- [x] Permissions — `IsAuthenticated`, custom `IsOwnerOrReadOnly`
+- [x] Filtering + Search + Ordering — `django-filter`, `SearchFilter`, pagination
+- [x] API Testing — `APITestCase`
+- [x] Swagger / OpenAPI — `drf-spectacular`
+- [x] Throttling, API Versioning (`/api/v1/`), `django-silk` profiling
+
+### Pre-Фаза 3 TODO — reinforce before moving to Docker/Deploy
+
+The roadmap's own "Junior Readiness Checklist" still has gaps that Фаза 3 won't fill for you — close these first:
+
+- [ ] **Verify real test coverage.** `>70% coverage` was checked off, but coverage was never actually measured with a tool. Run `uv add --dev coverage` → `uv run coverage run manage.py test` → `uv run coverage report` and confirm the number, especially for `products/views.py` and permission edge cases.
+- [ ] **Build one small resource from scratch, unaided.** Readiness checklist item "DRF: can build API with JWT, permissions, pagination from scratch" is still unchecked despite Фаза 2 being marked done. Pick something small (e.g. a `Wishlist` or `ProductImage` resource) and implement model → serializer → viewset → permission → tests without hints, as a self-check.
+- [ ] **Move secrets out of `config/settings.py`.** `SECRET_KEY` is hardcoded and `DEBUG = True` is committed. Not urgent for local learning, but Фаза 3 (Docker/deploy) assumes env-based config — introduce `django-environ` now, before the deploy phase, so you're not learning two things at once.
+- [ ] **Remove `django-rest-swagger` from `pyproject.toml`.** It's an abandoned package that isn't imported anywhere — `drf-spectacular` already covers OpenAPI docs. Dead/deprecated deps caused an ImportError once before; clean it up now (`uv remove django-rest-swagger`).
+- [ ] **Push a clean commit + README pass.** Roadmap wants "2 GitHub projects with README, at least 1 with live link." Confirm this repo's README documents the actual v1/v2 versioning and throttling behavior added most recently, and that `pyrightconfig.json` (currently untracked) is either committed or gitignored intentionally.
 
 **Approach:** go deep on fewer topics rather than covering everything shallowly. Understanding > speed.
 
@@ -92,13 +103,11 @@ Django project with settings in `config/` (not a same-named app directory):
 
 **Settings module:** `config.settings`
 
-## Installed packages (not yet wired up)
+## Installed packages
 
-These packages are in `pyproject.toml` but not yet added to `INSTALLED_APPS` in `config/settings.py`:
+All of these are wired into `INSTALLED_APPS`/`MIDDLEWARE` in `config/settings.py`: `rest_framework`, `debug_toolbar`, `drf_spectacular`, `django_filters`, `silk`. `django-stubs` is for mypy type checking only, not in `INSTALLED_APPS`.
 
-- `djangorestframework` → add `'rest_framework'` to `INSTALLED_APPS`
-- `django-debug-toolbar` → add `'debug_toolbar'` to `INSTALLED_APPS` + middleware
-- `django-stubs` → for mypy type checking only, not in `INSTALLED_APPS`
+`django-rest-swagger` is still in `pyproject.toml` but unused/deprecated — see Pre-Фаза 3 TODO above.
 
 ## DRF conventions to follow
 

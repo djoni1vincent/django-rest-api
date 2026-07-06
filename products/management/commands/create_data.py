@@ -1,7 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
-from products.models import Category, Order, Product, Review
-from users.models import CustomUser
+from products.models import Category, Product
 
 
 class Command(BaseCommand):
