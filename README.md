@@ -13,6 +13,7 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 - **API Versioning** — URL path versioning (`/api/v1/`, `/api/v2/`); v2 introduces a richer price representation (`{amount, currency}`) while v1 stays backward-compatible
 - **OpenAPI Documentation** — interactive Swagger UI per API version, generated with `drf-spectacular`
 - **Query Profiling** — `django-silk` integration for inspecting SQL queries and catching N+1 issues
+- **Wishlist** — authenticated users can maintain a personal wishlist of products
 
 ## Tech Stack
 
@@ -23,6 +24,7 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 - [drf-spectacular](https://drf-spectacular.readthedocs.io/) — OpenAPI schema & Swagger UI
 - [django-silk](https://github.com/jazzband/django-silk) — request/query profiling
 - [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/)
+- [django-environ](https://django-environ.readthedocs.io/) — environment-based configuration
 - [uv](https://docs.astral.sh/uv/) — dependency management and task running
 
 ## Getting Started
@@ -38,6 +40,7 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 git clone <repo-url>
 cd django-rest-api
 uv sync
+cp .env.example .env  # fill in SECRET_KEY
 uv run python manage.py migrate
 uv run python manage.py createsuperuser
 uv run python manage.py runserver
@@ -55,6 +58,8 @@ The API will be available at `http://127.0.0.1:8000/`.
 | `GET/POST /api/v2/products/` | List/create products (v2: `price` as `{amount, currency}`) |
 | `GET/POST /api/v1/categories/` | List/create categories |
 | `GET/POST /api/v1/reviews/` | List/create product reviews |
+| `GET /api/v1/wishlist/` | View the authenticated user's wishlist |
+| `POST /api/v1/wishlist/add_product/` | Add a product to the authenticated user's wishlist |
 | `/api/schema/v1/swagger-ui/` | Swagger UI — v1 |
 | `/api/schema/v2/swagger-ui/` | Swagger UI — v2 |
 | `/admin/` | Django admin |
@@ -72,6 +77,7 @@ uv run python manage.py test
 config/     # project settings, root URLs
 products/   # products, categories, reviews — models, serializers, views, filters
 users/      # custom user model, JWT serializer/view
+wishlist/   # per-user wishlist — model, serializer, views
 ```
 
 ## Planned Improvements
