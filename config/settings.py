@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "products",
+    "wishlist",
     "rest_framework",
     "debug_toolbar",
     "drf_spectacular",
