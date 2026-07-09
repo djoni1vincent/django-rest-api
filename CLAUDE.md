@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a **learning project** following the Django Roadmap 2026 (Junior → Middle Backend Developer).
 
 **Фаза 2 — DRF + API: ✅ COMPLETE (2026-07-06)**
-**Currently: pre-Фаза 3 reinforcement — see checklist below before starting Docker/Deploy**
-**Project: E-commerce Product API** — Products, Categories, Reviews, Orders, OrderItems
+**Pre-Фаза 3 reinforcement: ✅ COMPLETE (2026-07-06) — ready to start Docker/Deploy**
+**Project: E-commerce Product API** — Products, Categories, Reviews, Orders, OrderItems, Wishlist
 
 Roadmap: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/Django Roadmap 2026.md`
 Progress: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/progress.md`
@@ -23,17 +23,17 @@ Progress: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/progress.md
 - [x] Swagger / OpenAPI — `drf-spectacular`
 - [x] Throttling, API Versioning (`/api/v1/`), `django-silk` profiling
 
-### Pre-Фаза 3 TODO — reinforce before moving to Docker/Deploy
+### Pre-Фаза 3 TODO — all done (2026-07-06)
 
-The roadmap's own "Junior Readiness Checklist" still has gaps that Фаза 3 won't fill for you — close these first:
-
-- [ ] **Verify real test coverage.** `>70% coverage` was checked off, but coverage was never actually measured with a tool. Run `uv add --dev coverage` → `uv run coverage run manage.py test` → `uv run coverage report` and confirm the number, especially for `products/views.py` and permission edge cases.
-- [ ] **Build one small resource from scratch, unaided.** Readiness checklist item "DRF: can build API with JWT, permissions, pagination from scratch" is still unchecked despite Фаза 2 being marked done. Pick something small (e.g. a `Wishlist` or `ProductImage` resource) and implement model → serializer → viewset → permission → tests without hints, as a self-check.
-- [ ] **Move secrets out of `config/settings.py`.** `SECRET_KEY` is hardcoded and `DEBUG = True` is committed. Not urgent for local learning, but Фаза 3 (Docker/deploy) assumes env-based config — introduce `django-environ` now, before the deploy phase, so you're not learning two things at once.
-- [ ] **Remove `django-rest-swagger` from `pyproject.toml`.** It's an abandoned package that isn't imported anywhere — `drf-spectacular` already covers OpenAPI docs. Dead/deprecated deps caused an ImportError once before; clean it up now (`uv remove django-rest-swagger`).
-- [ ] **Push a clean commit + README pass.** Roadmap wants "2 GitHub projects with README, at least 1 with live link." Confirm this repo's README documents the actual v1/v2 versioning and throttling behavior added most recently, and that `pyrightconfig.json` (currently untracked) is either committed or gitignored intentionally.
+- [x] **Verify real test coverage.** Measured with `coverage` — 86%, above the 70% target.
+- [x] **Build one small resource from scratch, unaided.** Built the `wishlist` app (own Django app, `OneToOneField` user ↔ `ManyToManyField` products, custom `add_product` action, ownership-isolated `get_queryset`, tests) with hints only, no code handed over.
+- [x] **Move secrets out of `config/settings.py`.** `SECRET_KEY`/`DEBUG` now come from `.env` via `django-environ`; `.env` gitignored, `.env.example` committed as template.
+- [x] **Remove `django-rest-swagger` from `pyproject.toml`.** Done.
+- [x] **Push a clean commit + README pass.** README documents wishlist endpoints and `.env` setup; `pyrightconfig.json` committed intentionally; history split into logical commits.
 
 **Approach:** go deep on fewer topics rather than covering everything shallowly. Understanding > speed.
+
+**Next up: Фаза 3 — Docker + Deploy + AWS.** See roadmap for topic breakdown (Docker/docker-compose, Render/Railway deploy, AWS S3, GitHub Actions CI/CD, Sentry).
 
 ---
 
@@ -100,14 +100,13 @@ Django project with settings in `config/` (not a same-named app directory):
 - `config/` — project settings, root URLs, wsgi/asgi
 - `products/` — products app (models, views, tests)
 - `users/` — users app (models, views, tests)
+- `wishlist/` — per-user wishlist app (models, serializers, views, tests)
 
 **Settings module:** `config.settings`
 
 ## Installed packages
 
-All of these are wired into `INSTALLED_APPS`/`MIDDLEWARE` in `config/settings.py`: `rest_framework`, `debug_toolbar`, `drf_spectacular`, `django_filters`, `silk`. `django-stubs` is for mypy type checking only, not in `INSTALLED_APPS`.
-
-`django-rest-swagger` is still in `pyproject.toml` but unused/deprecated — see Pre-Фаза 3 TODO above.
+All of these are wired into `INSTALLED_APPS`/`MIDDLEWARE` in `config/settings.py`: `rest_framework`, `debug_toolbar`, `drf_spectacular`, `django_filters`, `silk`, `wishlist`. `django-stubs` is for mypy type checking only, not in `INSTALLED_APPS`. `django-environ` loads `SECRET_KEY`/`DEBUG` from `.env` (see `.env.example`).
 
 ## DRF conventions to follow
 
