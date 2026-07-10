@@ -1,6 +1,6 @@
 # E-commerce Product API
 
-A RESTful API for an e-commerce platform built with Django REST Framework, featuring JWT authentication, API versioning, request throttling, and query performance profiling.
+A RESTful API for an e-commerce platform built with Django REST Framework, featuring JWT authentication, API versioning, request throttling, query performance profiling, and a Dockerized PostgreSQL/Redis stack.
 
 ## Features
 
@@ -26,21 +26,46 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 - [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/)
 - [django-environ](https://django-environ.readthedocs.io/) — environment-based configuration
 - [uv](https://docs.astral.sh/uv/) — dependency management and task running
+- [PostgreSQL](https://www.postgresql.org/) — primary database
+- [Redis](https://redis.io/) — provisioned as a Docker Compose service, not yet wired into the app (reserved for future caching/Celery work)
+- [Docker](https://docs.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) — containerized local development (Django + PostgreSQL + Redis)
 
 ## Getting Started
 
-### Prerequisites
+### Option A: Docker Compose (recommended)
+
+Runs Django, PostgreSQL, and Redis together.
+
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
+
+```bash
+git clone <repo-url>
+cd django-rest-api
+cp .env.example .env  # fill in SECRET_KEY, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, DB_HOST, DB_PORT
+docker-compose up --build
+```
+
+The `web` container waits for PostgreSQL to report healthy, then runs migrations automatically via `entrypoint.sh` before starting the dev server. Create a superuser in a separate shell once the containers are up:
+
+```bash
+docker-compose exec web uv run python manage.py createsuperuser
+```
+
+The API will be available at `http://127.0.0.1:8000/`.
+
+### Option B: Local (uv + local PostgreSQL)
+
+**Prerequisites:**
 
 - Python 3.14+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
-
-### Installation
+- A running local PostgreSQL instance
 
 ```bash
 git clone <repo-url>
 cd django-rest-api
 uv sync
-cp .env.example .env  # fill in SECRET_KEY
+cp .env.example .env  # fill in SECRET_KEY; set DB_HOST=localhost (not "db") to reach your local PostgreSQL
 uv run python manage.py migrate
 uv run python manage.py createsuperuser
 uv run python manage.py runserver
@@ -74,15 +99,18 @@ uv run python manage.py test
 ## Project Structure
 
 ```
-config/     # project settings, root URLs
-products/   # products, categories, reviews — models, serializers, views, filters
-users/      # custom user model, JWT serializer/view
-wishlist/   # per-user wishlist — model, serializer, views
+config/              # project settings, root URLs
+products/            # products, categories, reviews — models, serializers, views, filters
+users/               # custom user model, JWT serializer/view
+wishlist/            # per-user wishlist — model, serializer, views
+Dockerfile           # Django app image (uv-based)
+docker-compose.yml   # web + db (PostgreSQL) + redis services
+entrypoint.sh        # runs migrations, then starts the dev server
 ```
 
 ## Planned Improvements
 
-- Increase automated test coverage
-- Dockerize the application (Django + PostgreSQL)
-- Deploy to a cloud provider with CI/CD
-- Migrate from SQLite to PostgreSQL
+- Deploy to a cloud provider (Render/Railway) with CI/CD via GitHub Actions
+- AWS S3 for media file storage
+- Error tracking with Sentry
+- Wire up Redis for caching / Celery task queue

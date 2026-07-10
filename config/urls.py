@@ -26,6 +26,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from products.urls import catalog_urlpatterns
 from users.views import CustomTokenObtainPairView
 
 urlpatterns = [
@@ -38,7 +39,8 @@ urlpatterns = [
     ),
     path("", RedirectView.as_view(url="/api/schema/v1/swagger-ui/")),
     path("api/<str:version>/", include("products.urls")),
-    path("api/<str:version>/", include("wishlist.urls")),
+    path("api/v1/", include(catalog_urlpatterns)),
+    path("api/v1/", include("wishlist.urls")),
     path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
