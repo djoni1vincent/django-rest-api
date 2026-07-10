@@ -8,6 +8,12 @@ services:
             - "POSTGRES_HOST_AUTH_METHOD=trust"
         env_file:
             - .env
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
     web:
         build: .
         container_name: django_app
@@ -19,7 +25,8 @@ services:
         env_file:
             - .env
         depends_on:
-            - db
-
+            db:
+                condition: service_healthy
+                restart: true
 volumes:
     postgres_db:
