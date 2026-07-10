@@ -32,8 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["django-rest-api-yljl.onrender.com"]
 
 # Application definition
 
@@ -169,6 +168,9 @@ SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "users.serializers.MyTokenObtainPairSerializer",
     # ...
 }
+
+CSRF_TRUSTED_ORIGINS = ["https://django-rest-api-yljl.onrender.com"]
+
 
 STORAGES = {
     "default": {
