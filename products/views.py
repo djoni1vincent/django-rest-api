@@ -1,10 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters, viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
 
 from .models import Category, Product, Review
 from .permissions import IsOwnerOrReadOnly
-from .serializers import CategorySerializer, ProductSerializer, ProductV2Serializer, ReviewSerializer
+from .serializers import (
+    CategorySerializer,
+    ProductSerializer,
+    ProductV2Serializer,
+    ReviewSerializer,
+)
 
 
 class ProductFilter(FilterSet):
@@ -17,6 +23,7 @@ class ProductFilter(FilterSet):
         }
 
 
+@extend_schema(tags=["products"])
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.prefetch_related("category").all()
     filter_backends = [
@@ -40,11 +47,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         return [IsAdminUser()]
 
 
+@extend_schema(tags=["Categories"])
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
 
+@extend_schema(tags=["Reviews"])
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()

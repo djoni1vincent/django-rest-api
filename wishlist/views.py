@@ -1,5 +1,6 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -7,6 +8,7 @@ from .models import Wishlist
 from .serializers import WishlistSerializer
 
 
+@extend_schema(tags=["Wishlist"])
 class WishlistViewSet(viewsets.ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
