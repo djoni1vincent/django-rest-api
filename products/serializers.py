@@ -32,7 +32,11 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProductV2Serializer(ProductSerializer):
+class ProductV2Serializer(serializers.ModelSerializer):
+    category = CategorySerializer(many=True, read_only=True)
+    category_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), many=True, write_only=True, source="category"
+    )
     price = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,8 +45,8 @@ class ProductV2Serializer(ProductSerializer):
             "id",
             "name",
             "category",
-            "price",
             "category_ids",
+            "price",
             "description",
         ]
 
