@@ -23,6 +23,7 @@ class Product(models.Model):
     description = models.TextField()
     price_currency = models.CharField(max_length=3, default="UAH")
     price_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    image = models.ImageField(upload_to="product_images/", blank=True, null=True)
 
     class Meta:
         ordering = ["name"]
