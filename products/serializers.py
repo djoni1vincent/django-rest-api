@@ -5,7 +5,7 @@ from users.serializers import UserSerializer
 from .models import Category, Product, Review
 
 
-# testing
+# test
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
