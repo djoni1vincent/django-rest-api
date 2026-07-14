@@ -4,7 +4,8 @@ from users.serializers import UserSerializer
 
 from .models import Category, Product, Review
 
-#testing CI/CD
+
+# testing
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
