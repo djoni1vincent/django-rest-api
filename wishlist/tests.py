@@ -54,5 +54,5 @@ class WishlistViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_anon_can_not_see_wishlist(self):
-        response = self.client.get(f"/api/v1/wishlist/")
+        response = self.client.get("/api/v1/wishlist/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
