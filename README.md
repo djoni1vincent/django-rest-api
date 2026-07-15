@@ -1,6 +1,8 @@
 # E-commerce Product API
 
-A RESTful API for an e-commerce platform built with Django REST Framework, featuring JWT authentication, API versioning, request throttling, query performance profiling, and a Dockerized PostgreSQL/Redis stack.
+A RESTful API for an e-commerce platform built with Django REST Framework, featuring JWT authentication, API versioning, request throttling, query performance profiling, S3-backed media storage, error tracking, and a Dockerized PostgreSQL/Redis stack.
+
+**Live:** [django-rest-api-yljl.onrender.com](https://django-rest-api-yljl.onrender.com) — deployed on Render, redeployed automatically on every push to `master` via GitHub Actions.
 
 ## Features
 
@@ -14,6 +16,9 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 - **OpenAPI Documentation** — interactive Swagger UI per API version, generated with `drf-spectacular`
 - **Query Profiling** — `django-silk` integration for inspecting SQL queries and catching N+1 issues
 - **Wishlist** — authenticated users can maintain a personal wishlist of products
+- **AWS S3 Media Storage** — user-uploaded media served via `django-storages` + `boto3`; static files served separately via WhiteNoise
+- **Error Tracking** — Sentry captures exceptions and logs in production (`DEBUG=False`); disabled locally/in tests so it never sends dev noise
+- **CI/CD** — GitHub Actions pipeline: lint (`ruff`) → test (`manage.py test` against a real PostgreSQL service) → deploy (triggers a Render deploy hook) on every push to `master`
 
 ## Tech Stack
 
@@ -29,6 +34,10 @@ A RESTful API for an e-commerce platform built with Django REST Framework, featu
 - [PostgreSQL](https://www.postgresql.org/) — primary database
 - [Redis](https://redis.io/) — provisioned as a Docker Compose service, not yet wired into the app (reserved for future caching/Celery work)
 - [Docker](https://docs.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) — containerized local development (Django + PostgreSQL + Redis)
+- [django-storages](https://django-storages.readthedocs.io/) + [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) — AWS S3 media storage
+- [sentry-sdk](https://docs.sentry.io/platforms/python/guides/django/) — error tracking and logging in production
+- [GitHub Actions](https://docs.github.com/en/actions) — CI/CD pipeline
+- [Render](https://render.com/) — hosting/deployment
 
 ## Getting Started
 
@@ -41,7 +50,7 @@ Runs Django, PostgreSQL, and Redis together.
 ```bash
 git clone <repo-url>
 cd django-rest-api
-cp .env.example .env  # fill in SECRET_KEY, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, DB_HOST, DB_PORT
+cp .env.example .env  # fill in SECRET_KEY, POSTGRES_*, AWS_* (S3 bucket), DSN (Sentry, only used when DEBUG=False)
 docker-compose up --build
 ```
 
@@ -65,7 +74,7 @@ The API will be available at `http://127.0.0.1:8000/`.
 git clone <repo-url>
 cd django-rest-api
 uv sync
-cp .env.example .env  # fill in SECRET_KEY; set DB_HOST=localhost (not "db") to reach your local PostgreSQL
+cp .env.example .env  # fill in SECRET_KEY, AWS_*, DSN; set DB_HOST=localhost (not "db") to reach your local PostgreSQL
 uv run python manage.py migrate
 uv run python manage.py createsuperuser
 uv run python manage.py runserver
@@ -106,11 +115,10 @@ wishlist/            # per-user wishlist — model, serializer, views
 Dockerfile           # Django app image (uv-based)
 docker-compose.yml   # web + db (PostgreSQL) + redis services
 entrypoint.sh        # runs migrations, then starts the dev server
+.github/workflows/   # CI/CD pipeline (lint → test → deploy)
 ```
 
 ## Planned Improvements
 
-- Deploy to a cloud provider (Render/Railway) with CI/CD via GitHub Actions
-- AWS S3 for media file storage
-- Error tracking with Sentry
 - Wire up Redis for caching / Celery task queue
+- Nginx + Gunicorn reverse proxy (optional, currently deployed via Render's own proxy)
