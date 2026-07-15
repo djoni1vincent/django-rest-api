@@ -42,6 +42,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: dummy
       AWS_STORAGE_BUCKET_NAME: dummy-bucket
       AWS_S3_REGION_NAME: us-east-1
+      DSN: ${{ secrets.DSN }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
