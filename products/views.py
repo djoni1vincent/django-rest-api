@@ -26,6 +26,7 @@ class ProductFilter(FilterSet):
 @extend_schema(tags=["products"])
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.prefetch_related("category").all()
+    # queryset = Product.objects.get("category").all()
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

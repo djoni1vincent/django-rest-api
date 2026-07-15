@@ -3,6 +3,8 @@ from rest_framework import routers
 
 from . import views
 
+
+
 product_router = routers.SimpleRouter()
 product_router.register(r"products", views.ProductViewSet)
 
