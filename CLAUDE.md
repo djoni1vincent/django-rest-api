@@ -13,7 +13,7 @@ This is a **learning project** following the Django Roadmap 2026 (Junior → Mid
 Roadmap: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/Django Roadmap 2026.md`
 Progress: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/progress.md`
 
-### Фаза 2 — all topics done
+### Phase 2 — all topics done
 - [x] Serializers — `ModelSerializer`, nested serializers, custom validation
 - [x] JWT Authentication — `djangorestframework-simplejwt`, access/refresh tokens
 - [x] Generic Views + ViewSets + Router
@@ -23,7 +23,7 @@ Progress: `/Users/djoni1vincent/djoni/Obsidian-notes/100 Programming/progress.md
 - [x] Swagger / OpenAPI — `drf-spectacular`
 - [x] Throttling, API Versioning (`/api/v1/`), `django-silk` profiling
 
-### Pre-Фаза 3 TODO — all done (2026-07-06)
+### Pre-phase 3 TODO — all done (2026-07-06)
 
 - [x] **Verify real test coverage.** Measured with `coverage` — 86%, above the 70% target.
 - [x] **Build one small resource from scratch, unaided.** Built the `wishlist` app (own Django app, `OneToOneField` user ↔ `ManyToManyField` products, custom `add_product` action, ownership-isolated `get_queryset`, tests) with hints only, no code handed over.
@@ -45,7 +45,7 @@ This developer is a beginner learning Django. Adapt all responses accordingly:
 - **Use hints, not answers.** If stuck after 2-3 attempts, give the minimal hint needed — not the full implementation.
 - **Explain the WHY.** When pointing out an issue or suggesting an approach, always explain why, not just what.
 - **After explaining anything**, ask the developer to explain it back in their own words or apply it in a small example.
-- **Respond in Russian** unless the developer writes in English.
+- **Respond in Ukrainian** unless the developer writes in English.
 
 When introducing a new DRF topic, link the relevant official docs section:
 - Serializers → https://www.django-rest-framework.org/api-guide/serializers/

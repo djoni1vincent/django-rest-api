@@ -1,7 +1,6 @@
 services:
     db:
         image: postgres:18
-        container_name: postgres_db
         volumes:
             - postgres_db:/var/lib/postgresql
         environment:
@@ -27,19 +26,5 @@ services:
             db:
                 condition: service_healthy
                 restart: true
-            redis:
-                condition: service_healthy
-                restart: true
-    redis:
-        image: redis:8
-        container_name: redis_cache
-        healthcheck:
-            test: ["CMD", "redis-cli", "ping"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
-            start_period: 5s
-
-
 volumes:
     postgres_db:
