@@ -52,7 +52,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-
+    permission_classes = [IsOwnerOrReadOnly]
 
 @extend_schema(tags=["Reviews"])
 class ReviewViewSet(viewsets.ModelViewSet):
