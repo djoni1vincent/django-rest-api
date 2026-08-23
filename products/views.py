@@ -19,14 +19,12 @@ class ProductFilter(FilterSet):
         fields = {
             "name": ["exact", "contains"],
             "category": ["exact"],
-            # "price": ["exact", "lte", "gte"],
         }
 
 
-@extend_schema(tags=["products"])
+@extend_schema(tags=["Products"])
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.prefetch_related("category").all()
-    # queryset = Product.objects.get("category").all()
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -57,7 +55,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Reviews"])
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    queryset = Review.objects.all()
+    queryset = Review.objects.prefetch_related("product__category").select_related("product", "author").all()
     permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):

@@ -19,7 +19,6 @@ class ProductSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(
         max_digits=10, decimal_places=2, source="price_amount"
     )
-    help_text = "The price of the product in the format {amount} {currency}"
 
     class Meta:
         model = Product
