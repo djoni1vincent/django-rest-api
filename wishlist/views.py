@@ -10,12 +10,11 @@ from .serializers import WishlistSerializer
 
 @extend_schema(tags=["Wishlist"])
 class WishlistViewSet(viewsets.ModelViewSet):
-    queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Wishlist.objects.filter(user=self.request.user)
+        return Wishlist.objects.prefetch_related("products__category").filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
